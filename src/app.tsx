@@ -61,7 +61,7 @@ $(async () => {
 			<div id="Content">
 				<textarea
 					id="Input"
-					spellcheck={false}
+					spellCheck={false}
 					placeholder=" "
 					rows={1}
 					onInput={(e) => {
