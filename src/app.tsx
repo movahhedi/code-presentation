@@ -18,29 +18,25 @@ const LoadContent = async () => {
 	const content = await import(`./content/${ProjectDirectory}/index.html?raw`);
 	Pages = content.default.split(Delimiter);
 	AllPages = Pages.length - 1;
-}
+};
 
 const LoadPage = (page = 1) => {
 	$("#MainContent").html(Pages[page]);
 	setTimeout(() => $("textarea").trigger("input"), 100);
-}
+};
 
 document.addEventListener("keydown", (event) => {
 	if (!event.ctrlKey) return;
 
 	if (event.keyCode === KeyCode_Left) {
 		if (Page <= 0) {
-			Page = 0;
-			return false;
-		}
-		Page--;
+			Page = AllPages;
+		} else Page--;
 		LoadPage(Page);
 	} else if (event.keyCode === KeyCode_Right) {
 		if (Page >= AllPages) {
-			Page = AllPages;
-			return false;
-		}
-		Page++;
+			Page = 0;
+		} else Page++;
 		LoadPage(Page);
 	} else if (event.keyCode === KeyCode_Up) {
 		IsLightMode = !IsLightMode;
@@ -50,6 +46,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 $(async () => {
+	await LoadContent();
 
 	const PageContent = (
 		<div>
@@ -70,17 +67,17 @@ $(async () => {
 						e.currentTarget.removeAttribute("rows");
 					}}
 					onKeyDown={(e) => {
+						e.currentTarget.spellcheck = false;
 						if (e.key == "Tab") {
 							// get caret position/selection
-							const target = e.target as HTMLTextAreaElement;
+							const target = e.currentTarget as HTMLTextAreaElement;
 							const start = target.selectionStart ?? 0;
 							const end = target.selectionEnd ?? 0;
 
-							const $this = $(this);
-							const value = "" + $this.val();
+							const value = "" + e.currentTarget.value;
 
 							// set textarea value to: text before caret + tab + text after caret
-							$this.val(value.substring(0, start) + "\t" + value.substring(end));
+							e.currentTarget.value = value.substring(0, start) + "\t" + value.substring(end);
 
 							// put caret at right position again (add one for the tab)
 							target.selectionStart = target.selectionEnd = start + 1;
@@ -100,6 +97,5 @@ $(async () => {
 
 	document.body.append(PageContent);
 	document.title = Name;
-	await LoadContent();
 	LoadPage(1);
 });
