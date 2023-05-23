@@ -121,11 +121,15 @@ a-gray {
 	max-height: 100px; */
 	border-right: 3px solid #ff8000;
 	border-bottom: 1px solid #007fff;
+
+	&:placeholder-shown {
+		background: transparent;
+		border-bottom: none;
+	}
 }
 
-#Input:placeholder-shown {
-	background: transparent;
-	border-bottom: none;
+textarea {
+	width: 100%;
 }
 
 input,

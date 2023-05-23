@@ -1,12 +1,3 @@
-function trigger(el: Element, eventType: string) {
-	if (typeof eventType === "string" && typeof el[eventType] === "function") {
-		el[eventType]();
-	} else {
-		const event = typeof eventType === "string" ? new Event(eventType, { bubbles: true }) : eventType;
-		el.dispatchEvent(event);
-	}
-}
-
 function docReady(fn) {
 	// see if DOM is already available
 	if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -15,6 +6,13 @@ function docReady(fn) {
 	} else {
 		document.addEventListener("DOMContentLoaded", fn);
 	}
+}
+
+function MakeTextareaDynamicHeight(el: HTMLTextAreaElement, ev?: Event): any {
+	el = el as HTMLTextAreaElement;
+	el.style.height = "25px";
+	el.style.height = el.scrollHeight + "px";
+	el.removeAttribute("rows");
 }
 
 const ProjectDirectory = import.meta.env.VITE_CONTENT_NAME;
@@ -39,12 +37,7 @@ const TypeTextarea = (
 		spellCheck={false}
 		placeholder=" "
 		rows={1}
-		onInput={(e) => {
-			e.currentTarget.style.height = "25px";
-			e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
-			e.currentTarget.removeAttribute("rows");
-			SetLineNumbers();
-		}}
+		// onInput={(e) => {}}
 		onKeyDown={(e) => {
 			e.currentTarget.spellcheck = false;
 			if (e.key == "Tab") {
@@ -78,7 +71,14 @@ const LoadContent = async () => {
 const LoadPage = (page = 0) => {
 	document.getElementById("MainContent").innerHTML = Pages[page] as string;
 	setTimeout(() => {
-		[...document.getElementsByTagName("textarea")].map((i) => trigger(i, "input"));
+		// [...document.getElementsByTagName("textarea")].map((i) => trigger(i, "input"));
+		[...document.getElementsByTagName("textarea")].map((i) => {
+			if (i == TypeTextarea) return;
+			console.log(i);
+			MakeTextareaDynamicHeight(i);
+			// i.oninput = (e) => MakeTextareaDynamicHeight(i, e);
+			SetLineNumbers();
+		});
 	}, 50);
 	setTimeout(SetLineNumbers, 1);
 };
